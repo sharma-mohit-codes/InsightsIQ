@@ -1,8 +1,8 @@
 # Tasks
 
 ## Phase 1
-- [ ] Project setup
-- [ ] Backend initialization
+- [x] Project setup
+- [x] Backend initialization
 - [x] Frontend initialization
 
 ## Phase 2

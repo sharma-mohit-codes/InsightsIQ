@@ -3,7 +3,7 @@
 ## Phase 1
 - [ ] Project setup
 - [ ] Backend initialization
-- [ ] Frontend initialization
+- [x] Frontend initialization
 
 ## Phase 2
 - [ ] Dataset loading

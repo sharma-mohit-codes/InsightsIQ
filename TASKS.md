@@ -8,7 +8,7 @@
 ## Phase 2
 - [x] Dataset loading
 - [ ] SQLite setup
-- [x] Analytics module (KPI service — Step 2B; monthly trends — Step 2C)
+- [x] Analytics module (KPI — 2B; monthly trends — 2C; category breakdown — 2D)
 
 ## Phase 3
 - [ ] Dashboard UI

@@ -6,7 +6,7 @@
 - [x] Frontend initialization
 
 ## Phase 2
-- [ ] Dataset loading
+- [x] Dataset loading
 - [ ] SQLite setup
 - [ ] Analytics module
 

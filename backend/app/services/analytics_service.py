@@ -1,3 +1,5 @@
+import calendar
+
 from app.data.loader import DatasetLoader, get_dataset_loader
 
 
@@ -68,3 +70,57 @@ class AnalyticsService:
             "total_customers": total_customers,
             "profit_margin_pct": profit_margin_pct,
         }
+
+    # ------------------------------------------------------------------
+    # Monthly trend method
+    # ------------------------------------------------------------------
+
+    def get_monthly_trends(self) -> list[dict]:
+        """Groups sales data by year and month and returns chronological trend data.
+
+        Uses the already-parsed Order Date column from DatasetLoader.
+        Each row in the result represents one calendar month.
+
+        Returns a list of dictionaries sorted chronologically (oldest first),
+        each containing:
+
+        - year       : int  — calendar year (e.g. 2015)
+        - month      : int  — calendar month number 1-12
+        - month_name : str  — full English month name (e.g. "November")
+        - sales      : float — total sales for that month (2 dp)
+        - profit     : float — total profit for that month (2 dp)
+        - orders     : int  — count of unique Order IDs placed that month
+        """
+        df = self._df()
+
+        # Derive temporary grouping columns from the pre-parsed datetime column.
+        # These are local variables — no mutations to the shared DataFrame.
+        year_col = df["Order Date"].dt.year
+        month_col = df["Order Date"].dt.month
+
+        grouped = (
+            df.assign(year_grp=year_col, month_grp=month_col)
+            .groupby(["year_grp", "month_grp"], sort=True)
+            .agg(
+                sales=("Sales", "sum"),
+                profit=("Profit", "sum"),
+                orders=("Order ID", "nunique"),
+            )
+            .reset_index()
+        )
+
+        result = []
+        for row in grouped.itertuples(index=False):
+            result.append(
+                {
+                    "year": int(row.year_grp),
+                    "month": int(row.month_grp),
+                    "month_name": calendar.month_name[int(row.month_grp)],
+                    "sales": self._round(row.sales),
+                    "profit": self._round(row.profit),
+                    "orders": int(row.orders),
+                }
+            )
+
+        return result
+

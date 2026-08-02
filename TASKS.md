@@ -11,7 +11,7 @@
 - [x] Analytics module (KPI — 2B; monthly trends — 2C; category breakdown — 2D; region breakdown — 2E)
 
 ## Phase 3
-- [ ] Dashboard UI
+- [x] REST API endpoints (KPIs, trends, categories, regions — 3A)
 
 ## Phase 4
 - [ ] Charts

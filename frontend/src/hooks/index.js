@@ -1,2 +1,2 @@
 // Custom React hooks export file
-export {}
+export { useKPIs } from './useKPIs'

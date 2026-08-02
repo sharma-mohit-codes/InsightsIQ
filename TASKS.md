@@ -12,6 +12,7 @@
 
 ## Phase 3
 - [x] REST API endpoints (KPIs, trends, categories, regions — 3A)
+- [x] Dashboard KPI cards connected to backend — 3B
 
 ## Phase 4
 - [ ] Charts

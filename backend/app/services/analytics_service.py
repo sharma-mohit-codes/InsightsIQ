@@ -161,3 +161,41 @@ class AnalyticsService:
             }
             for row in grouped.itertuples(index=False)
         ]
+
+    # ------------------------------------------------------------------
+    # Region breakdown method
+    # ------------------------------------------------------------------
+
+    def get_region_breakdown(self) -> list[dict]:
+        """Groups sales data by Region and returns per-region aggregates.
+
+        Returns a list of dictionaries sorted by sales descending (highest first),
+        each containing:
+
+        - region  : str   — region name
+        - sales   : float — total sales (2 dp)
+        - profit  : float — total profit (2 dp)
+        - orders  : int   — count of unique Order IDs
+        """
+        df = self._df()
+
+        grouped = (
+            df.groupby("Region", sort=False)
+            .agg(
+                sales=("Sales", "sum"),
+                profit=("Profit", "sum"),
+                orders=("Order ID", "nunique"),
+            )
+            .reset_index()
+            .sort_values("sales", ascending=False)
+        )
+
+        return [
+            {
+                "region": str(row.Region),
+                "sales": self._round(row.sales),
+                "profit": self._round(row.profit),
+                "orders": int(row.orders),
+            }
+            for row in grouped.itertuples(index=False)
+        ]

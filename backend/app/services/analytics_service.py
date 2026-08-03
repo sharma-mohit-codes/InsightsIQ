@@ -199,3 +199,58 @@ class AnalyticsService:
             }
             for row in grouped.itertuples(index=False)
         ]
+
+    # ------------------------------------------------------------------
+    # Sales transaction method
+    # ------------------------------------------------------------------
+
+    def get_sales_data(self, page: int = 1, page_size: int = 20) -> dict:
+        """Returns paginated transaction records and pagination metadata.
+
+        Args:
+            page: 1-indexed page number (default 1)
+            page_size: number of records per page (default 20)
+
+        Returns:
+            dict containing total_records, total_pages, current_page, and data list.
+        """
+        df = self._df()
+        total_records = len(df)
+
+        page = max(1, page)
+        page_size = max(1, page_size)
+
+        total_pages = (total_records + page_size - 1) // page_size if total_records > 0 else 0
+
+        start_idx = (page - 1) * page_size
+        end_idx = start_idx + page_size
+
+        page_df = df.iloc[start_idx:end_idx]
+
+        records = []
+        for _, row in page_df.iterrows():
+            order_date = row["Order Date"]
+            date_str = (
+                order_date.strftime("%Y-%m-%d")
+                if hasattr(order_date, "strftime")
+                else str(order_date)
+            )
+            records.append(
+                {
+                    "order_id": str(row["Order ID"]),
+                    "order_date": date_str,
+                    "customer_name": str(row["Customer Name"]),
+                    "region": str(row["Region"]),
+                    "category": str(row["Category"]),
+                    "sales": self._round(row["Sales"]),
+                    "profit": self._round(row["Profit"]),
+                }
+            )
+
+        return {
+            "total_records": total_records,
+            "total_pages": total_pages,
+            "current_page": page,
+            "data": records,
+        }
+

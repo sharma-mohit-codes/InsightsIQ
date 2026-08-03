@@ -43,3 +43,14 @@ def get_categories():
 def get_regions():
     """Returns sales breakdown by region."""
     return _service.get_region_breakdown()
+
+
+# ------------------------------------------------------------------
+# Sales endpoint
+# ------------------------------------------------------------------
+
+@router.get("/sales")
+def get_sales(page: int = 1, page_size: int = 20):
+    """Returns paginated sales transaction records."""
+    return _service.get_sales_data(page=page, page_size=page_size)
+

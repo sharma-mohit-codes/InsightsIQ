@@ -3,6 +3,8 @@ import {
   ResponsiveContainer,
   LineChart,
   Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -11,6 +13,7 @@ import {
 } from 'recharts'
 import { useKPIs } from '../hooks/useKPIs'
 import { useMonthlyTrends } from '../hooks/useMonthlyTrends'
+import { useCategories } from '../hooks/useCategories'
 import KPICard from '../components/KPICard'
 
 // ── Value formatters ────────────────────────────────────────────────────────
@@ -116,12 +119,12 @@ function KPIError({ message }) {
   )
 }
 
-function ChartError({ message }) {
+function ChartError({ title = 'Failed to load chart data', message }) {
   return (
     <div className="p-6 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
       <span className="text-xl">⚠️</span>
       <div>
-        <p className="text-sm font-semibold text-red-700">Failed to load monthly trends</p>
+        <p className="text-sm font-semibold text-red-700">{title}</p>
         <p className="text-xs text-red-500 mt-1 font-mono">{message}</p>
       </div>
     </div>
@@ -132,6 +135,7 @@ function ChartError({ message }) {
 export default function DashboardPage() {
   const { data: kpiData, loading: kpiLoading, error: kpiError } = useKPIs()
   const { data: trendsData, loading: trendsLoading, error: trendsError } = useMonthlyTrends()
+  const { data: categoriesData, loading: categoriesLoading, error: categoriesError } = useCategories()
 
   const formattedTrends = React.useMemo(() => {
     if (!trendsData || !Array.isArray(trendsData)) return []
@@ -186,7 +190,7 @@ export default function DashboardPage() {
 
         {trendsLoading && <ChartSkeleton />}
 
-        {trendsError && <ChartError message={trendsError} />}
+        {trendsError && <ChartError title="Failed to load monthly trends" message={trendsError} />}
 
         {trendsData && !trendsLoading && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
@@ -223,6 +227,39 @@ export default function DashboardPage() {
                     activeDot={{ r: 6 }}
                   />
                 </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Category Breakdown Chart section */}
+      <section aria-label="Sales by Category">
+        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          Sales by Category
+        </h2>
+
+        {categoriesLoading && <ChartSkeleton />}
+
+        {categoriesError && <ChartError title="Failed to load categories" message={categoriesError} />}
+
+        {categoriesData && !categoriesLoading && (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={categoriesData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis dataKey="category" tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tickFormatter={(val) => `$${val.toLocaleString()}`}
+                  />
+                  <Tooltip
+                    formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Sales']}
+                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                  />
+                  <Bar dataKey="sales" name="Sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                </BarChart>
               </ResponsiveContainer>
             </div>
           </div>

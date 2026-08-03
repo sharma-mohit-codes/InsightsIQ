@@ -1,5 +1,16 @@
 import React from 'react'
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from 'recharts'
 import { useKPIs } from '../hooks/useKPIs'
+import { useMonthlyTrends } from '../hooks/useMonthlyTrends'
 import KPICard from '../components/KPICard'
 
 // ── Value formatters ────────────────────────────────────────────────────────
@@ -80,6 +91,15 @@ function KPISkeleton() {
   )
 }
 
+function ChartSkeleton() {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 h-96 animate-pulse flex flex-col justify-between">
+      <div className="h-4 w-40 bg-slate-200 rounded mb-4" />
+      <div className="h-64 bg-slate-100 rounded w-full" />
+    </div>
+  )
+}
+
 // ── Error state ─────────────────────────────────────────────────────────────
 function KPIError({ message }) {
   return (
@@ -96,12 +116,35 @@ function KPIError({ message }) {
   )
 }
 
+function ChartError({ message }) {
+  return (
+    <div className="p-6 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+      <span className="text-xl">⚠️</span>
+      <div>
+        <p className="text-sm font-semibold text-red-700">Failed to load monthly trends</p>
+        <p className="text-xs text-red-500 mt-1 font-mono">{message}</p>
+      </div>
+    </div>
+  )
+}
+
 // ── Dashboard Page ──────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const { data, loading, error } = useKPIs()
+  const { data: kpiData, loading: kpiLoading, error: kpiError } = useKPIs()
+  const { data: trendsData, loading: trendsLoading, error: trendsError } = useMonthlyTrends()
+
+  const formattedTrends = React.useMemo(() => {
+    if (!trendsData || !Array.isArray(trendsData)) return []
+    return trendsData.map((item) => ({
+      ...item,
+      period: item.month_name
+        ? `${item.month_name.slice(0, 3)} ${item.year}`
+        : `${item.month}/${item.year}`,
+    }))
+  }, [trendsData])
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Page header */}
       <div className="border-b border-slate-200 pb-4">
         <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Dashboard</h1>
@@ -116,13 +159,13 @@ export default function DashboardPage() {
           Key Performance Indicators
         </h2>
 
-        {loading && <KPISkeleton />}
+        {kpiLoading && <KPISkeleton />}
 
-        {error && <KPIError message={error} />}
+        {kpiError && <KPIError message={kpiError} />}
 
-        {data && !loading && (
+        {kpiData && !kpiLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {buildCards(data).map((card) => (
+            {buildCards(kpiData).map((card) => (
               <KPICard
                 key={card.id}
                 title={card.title}
@@ -131,6 +174,57 @@ export default function DashboardPage() {
                 accentClass={card.accentClass}
               />
             ))}
+          </div>
+        )}
+      </section>
+
+      {/* Monthly Trends Chart section */}
+      <section aria-label="Monthly Trends">
+        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          Monthly Sales &amp; Profit Trends
+        </h2>
+
+        {trendsLoading && <ChartSkeleton />}
+
+        {trendsError && <ChartError message={trendsError} />}
+
+        {trendsData && !trendsLoading && (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={formattedTrends} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                  <XAxis dataKey="period" tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <YAxis
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    tickFormatter={(val) => `$${val.toLocaleString()}`}
+                  />
+                  <Tooltip
+                    formatter={(value) => [`$${Number(value).toLocaleString()}`, undefined]}
+                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                  />
+                  <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="sales"
+                    name="Sales"
+                    stroke="#2563eb"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="profit"
+                    name="Profit"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    dot={false}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         )}
       </section>

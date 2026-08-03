@@ -50,7 +50,15 @@ def get_regions():
 # ------------------------------------------------------------------
 
 @router.get("/sales")
-def get_sales(page: int = 1, page_size: int = 20):
-    """Returns paginated sales transaction records."""
-    return _service.get_sales_data(page=page, page_size=page_size)
+def get_sales(
+    page: int = 1,
+    page_size: int = 20,
+    region: str = "All",
+    category: str = "All",
+):
+    """Returns paginated sales transaction records with optional region and category filtering."""
+    return _service.get_sales_data(
+        page=page, page_size=page_size, region=region, category=category
+    )
+
 

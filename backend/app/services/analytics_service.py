@@ -204,28 +204,52 @@ class AnalyticsService:
     # Sales transaction method
     # ------------------------------------------------------------------
 
-    def get_sales_data(self, page: int = 1, page_size: int = 20) -> dict:
-        """Returns paginated transaction records and pagination metadata.
+    def get_sales_data(
+        self,
+        page: int = 1,
+        page_size: int = 20,
+        region: str = "All",
+        category: str = "All",
+    ) -> dict:
+        """Returns paginated sales transaction records with optional region and category filtering.
 
         Args:
             page: 1-indexed page number (default 1)
             page_size: number of records per page (default 20)
+            region: region filter, or "All" for no filter
+            category: category filter, or "All" for no filter
 
         Returns:
-            dict containing total_records, total_pages, current_page, and data list.
+            dict containing total_records, filtered_records, total_pages, current_page, page_size, and data.
         """
         df = self._df()
         total_records = len(df)
 
+        filtered_df = df
+
+        if region and region.strip() and region.strip().lower() != "all":
+            filtered_df = filtered_df[
+                filtered_df["Region"].str.lower() == region.strip().lower()
+            ]
+
+        if category and category.strip() and category.strip().lower() != "all":
+            filtered_df = filtered_df[
+                filtered_df["Category"].str.lower() == category.strip().lower()
+            ]
+
+        filtered_records = len(filtered_df)
+
         page = max(1, page)
         page_size = max(1, page_size)
 
-        total_pages = (total_records + page_size - 1) // page_size if total_records > 0 else 0
+        total_pages = (
+            (filtered_records + page_size - 1) // page_size if filtered_records > 0 else 0
+        )
 
         start_idx = (page - 1) * page_size
         end_idx = start_idx + page_size
 
-        page_df = df.iloc[start_idx:end_idx]
+        page_df = filtered_df.iloc[start_idx:end_idx]
 
         records = []
         for _, row in page_df.iterrows():
@@ -249,8 +273,11 @@ class AnalyticsService:
 
         return {
             "total_records": total_records,
+            "filtered_records": filtered_records,
             "total_pages": total_pages,
             "current_page": page,
+            "page_size": page_size,
             "data": records,
         }
+
 

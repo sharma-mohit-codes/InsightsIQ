@@ -5,6 +5,9 @@ import {
   Line,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
+  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -14,7 +17,11 @@ import {
 import { useKPIs } from '../hooks/useKPIs'
 import { useMonthlyTrends } from '../hooks/useMonthlyTrends'
 import { useCategories } from '../hooks/useCategories'
+import { useRegions } from '../hooks/useRegions'
 import KPICard from '../components/KPICard'
+
+// ── Region donut chart color palette ────────────────────────────────────────
+const REGION_COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4']
 
 // ── Value formatters ────────────────────────────────────────────────────────
 const fmtCurrency = (n) =>
@@ -136,6 +143,7 @@ export default function DashboardPage() {
   const { data: kpiData, loading: kpiLoading, error: kpiError } = useKPIs()
   const { data: trendsData, loading: trendsLoading, error: trendsError } = useMonthlyTrends()
   const { data: categoriesData, loading: categoriesLoading, error: categoriesError } = useCategories()
+  const { data: regionsData, loading: regionsLoading, error: regionsError } = useRegions()
 
   const formattedTrends = React.useMemo(() => {
     if (!trendsData || !Array.isArray(trendsData)) return []
@@ -260,6 +268,47 @@ export default function DashboardPage() {
                   />
                   <Bar dataKey="sales" name="Sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                 </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Region Distribution Chart section */}
+      <section aria-label="Sales by Region">
+        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+          Sales by Region
+        </h2>
+
+        {regionsLoading && <ChartSkeleton />}
+
+        {regionsError && <ChartError title="Failed to load regions" message={regionsError} />}
+
+        {regionsData && !regionsLoading && (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="h-80 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Tooltip
+                    formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Sales']}
+                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                  />
+                  <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                  <Pie
+                    data={regionsData}
+                    dataKey="sales"
+                    nameKey="region"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={65}
+                    outerRadius={105}
+                    paddingAngle={4}
+                  >
+                    {regionsData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={REGION_COLORS[index % REGION_COLORS.length]} />
+                    ))}
+                  </Pie>
+                </PieChart>
               </ResponsiveContainer>
             </div>
           </div>

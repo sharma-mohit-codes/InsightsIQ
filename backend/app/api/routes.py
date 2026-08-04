@@ -55,10 +55,11 @@ def get_sales(
     page_size: int = 20,
     region: str = "All",
     category: str = "All",
+    search: str = "",
 ):
-    """Returns paginated sales transaction records with optional region and category filtering."""
+    """Returns paginated sales transaction records with optional region, category, and search filtering."""
     return _service.get_sales_data(
-        page=page, page_size=page_size, region=region, category=category
+        page=page, page_size=page_size, region=region, category=category, search=search
     )
 
 

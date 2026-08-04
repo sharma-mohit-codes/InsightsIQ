@@ -210,14 +210,16 @@ class AnalyticsService:
         page_size: int = 20,
         region: str = "All",
         category: str = "All",
+        search: str = "",
     ) -> dict:
-        """Returns paginated sales transaction records with optional region and category filtering.
+        """Returns paginated sales transaction records with optional region, category, and search filtering.
 
         Args:
             page: 1-indexed page number (default 1)
             page_size: number of records per page (default 20)
             region: region filter, or "All" for no filter
             category: category filter, or "All" for no filter
+            search: search string to filter across Order ID, Customer Name, Category, and Region
 
         Returns:
             dict containing total_records, filtered_records, total_pages, current_page, page_size, and data.
@@ -235,6 +237,15 @@ class AnalyticsService:
         if category and category.strip() and category.strip().lower() != "all":
             filtered_df = filtered_df[
                 filtered_df["Category"].str.lower() == category.strip().lower()
+            ]
+
+        if search and search.strip():
+            search_term = search.strip().lower()
+            filtered_df = filtered_df[
+                filtered_df["Order ID"].astype(str).str.lower().str.contains(search_term, regex=False)
+                | filtered_df["Customer Name"].astype(str).str.lower().str.contains(search_term, regex=False)
+                | filtered_df["Category"].astype(str).str.lower().str.contains(search_term, regex=False)
+                | filtered_df["Region"].astype(str).str.lower().str.contains(search_term, regex=False)
             ]
 
         filtered_records = len(filtered_df)

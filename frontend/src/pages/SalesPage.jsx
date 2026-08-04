@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { apiFetch } from '../services/api'
 
 const fmtCurrency = (n) =>
@@ -8,9 +8,25 @@ export default function SalesPage() {
   const [page, setPage] = useState(1)
   const [region, setRegion] = useState('All')
   const [category, setCategory] = useState('All')
+  const [search, setSearch] = useState('')
+  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [salesResponse, setSalesResponse] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const debounceTimer = useRef(null)
+
+  // Debounce search input: flush after 300 ms and reset page to 1
+  useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    debounceTimer.current = setTimeout(() => {
+      setPage(1)
+      setDebouncedSearch(search)
+    }, 300)
+    return () => {
+      if (debounceTimer.current) clearTimeout(debounceTimer.current)
+    }
+  }, [search])
 
   useEffect(() => {
     let cancelled = false
@@ -18,7 +34,7 @@ export default function SalesPage() {
     setError(null)
 
     apiFetch(
-      `/sales?page=${page}&page_size=20&region=${encodeURIComponent(region)}&category=${encodeURIComponent(category)}`
+      `/sales?page=${page}&page_size=20&region=${encodeURIComponent(region)}&category=${encodeURIComponent(category)}&search=${encodeURIComponent(debouncedSearch)}`
     )
       .then((json) => {
         if (!cancelled) {
@@ -36,7 +52,7 @@ export default function SalesPage() {
     return () => {
       cancelled = true
     }
-  }, [page, region, category])
+  }, [page, region, category, debouncedSearch])
 
   const totalPages = salesResponse?.total_pages ?? 1
   const totalRecords = salesResponse?.total_records ?? 0
@@ -63,6 +79,18 @@ export default function SalesPage() {
           </div>
         </div>
       )}
+
+      {/* Search input */}
+      <div className="w-full">
+        <input
+          id="sales-search"
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by Order ID, Customer, Category or Region..."
+          className="w-full px-4 py-2 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800 placeholder-slate-400"
+        />
+      </div>
 
       {/* Filters and Record Count */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

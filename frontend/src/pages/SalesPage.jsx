@@ -6,6 +6,8 @@ const fmtCurrency = (n) =>
 
 export default function SalesPage() {
   const [page, setPage] = useState(1)
+  const [region, setRegion] = useState('All')
+  const [category, setCategory] = useState('All')
   const [salesResponse, setSalesResponse] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -15,7 +17,9 @@ export default function SalesPage() {
     setLoading(true)
     setError(null)
 
-    apiFetch(`/sales?page=${page}&page_size=20`)
+    apiFetch(
+      `/sales?page=${page}&page_size=20&region=${encodeURIComponent(region)}&category=${encodeURIComponent(category)}`
+    )
       .then((json) => {
         if (!cancelled) {
           setSalesResponse(json)
@@ -32,10 +36,11 @@ export default function SalesPage() {
     return () => {
       cancelled = true
     }
-  }, [page])
+  }, [page, region, category])
 
   const totalPages = salesResponse?.total_pages ?? 1
   const totalRecords = salesResponse?.total_records ?? 0
+  const filteredRecords = salesResponse?.filtered_records ?? 0
   const records = salesResponse?.data ?? []
 
   return (
@@ -58,6 +63,56 @@ export default function SalesPage() {
           </div>
         </div>
       )}
+
+      {/* Filters and Record Count */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <label htmlFor="region-filter" className="text-sm font-medium text-slate-700">
+              Region:
+            </label>
+            <select
+              id="region-filter"
+              value={region}
+              onChange={(e) => {
+                setRegion(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800"
+            >
+              <option value="All">All</option>
+              <option value="Central">Central</option>
+              <option value="East">East</option>
+              <option value="South">South</option>
+              <option value="West">West</option>
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="category-filter" className="text-sm font-medium text-slate-700">
+              Category:
+            </label>
+            <select
+              id="category-filter"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800"
+            >
+              <option value="All">All</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Office Supplies">Office Supplies</option>
+              <option value="Technology">Technology</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="text-sm font-medium text-slate-600">
+          Showing {records.length} of {filteredRecords} records
+        </div>
+      </div>
 
       {/* Table Container */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">

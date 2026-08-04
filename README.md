@@ -50,13 +50,13 @@ The project demonstrates full-stack software engineering using modern frontend a
 
 > KPI Dashboard
 
-![Dashboard KPI](screenshots/dashboard-kpi.png)
+![Dashboard KPI](screenshots/dashboard.png)
 
 ---
 
 > Analytics Dashboard
 
-![Dashboard Charts](screenshots/dashboard-analytics.png)
+![Dashboard Charts](screenshots/analytics.png)
 
 ---
 
@@ -64,13 +64,13 @@ The project demonstrates full-stack software engineering using modern frontend a
 
 > Initial Sales Module
 
-![Sales Empty](screenshots/sales-empty.png)
+![Sales Empty](screenshots/plain-sales.png)
 
 ---
 
 > Paginated Sales Table
 
-![Sales Table](screenshots/sales-table.png)
+![Sales Table](screenshots/paginated-sales.png)
 
 ---
 

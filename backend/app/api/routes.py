@@ -63,3 +63,13 @@ def get_sales(
     )
 
 
+# ------------------------------------------------------------------
+# Products endpoint
+# ------------------------------------------------------------------
+
+@router.get("/products/rankings")
+def get_product_rankings():
+    """Returns the top 10 products ranked by total sales."""
+    return _service.get_product_rankings()
+
+

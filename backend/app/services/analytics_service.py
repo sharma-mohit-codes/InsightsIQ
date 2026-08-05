@@ -291,4 +291,44 @@ class AnalyticsService:
             "data": records,
         }
 
+    # ------------------------------------------------------------------
+    # Product rankings method
+    # ------------------------------------------------------------------
+
+    def get_product_rankings(self) -> list[dict]:
+        """Groups sales data by Product Name and returns the top 10 products by total sales.
+
+        Returns a list of up to 10 dictionaries sorted by total sales descending,
+        each containing:
+
+        - product_name : str   — product name
+        - sales        : float — total sales (2 dp)
+        - profit       : float — total profit (2 dp)
+        - quantity     : int   — total units sold
+        """
+        df = self._df()
+
+        grouped = (
+            df.groupby("Product Name", sort=False)
+            .agg(
+                total_sales=("Sales", "sum"),
+                total_profit=("Profit", "sum"),
+                total_quantity=("Quantity", "sum"),
+            )
+            .reset_index()
+            .sort_values("total_sales", ascending=False)
+            .head(10)
+        )
+
+        return [
+            {
+                "product_name": str(row["Product Name"]),
+                "sales": self._round(row["total_sales"]),
+                "profit": self._round(row["total_profit"]),
+                "quantity": int(row["total_quantity"]),
+            }
+            for _, row in grouped.iterrows()
+        ]
+
+
 

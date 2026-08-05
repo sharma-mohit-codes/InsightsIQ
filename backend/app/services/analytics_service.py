@@ -368,3 +368,61 @@ class AnalyticsService:
             }
             for _, row in grouped.iterrows()
         ]
+
+    # ------------------------------------------------------------------
+    # Business insights method
+    # ------------------------------------------------------------------
+
+    def get_business_insights(self) -> dict:
+        """Computes six high-level executive insights from the dataset.
+
+        Returns a plain dictionary with the following keys:
+
+        - best_category         : str — category with highest total sales
+        - lowest_profit_category: str — category with lowest total profit
+        - best_region           : str — region with highest total sales
+        - top_customer          : str — customer with highest total sales
+        - best_product          : str — product with highest total sales
+        - best_sales_month      : str — "Month YYYY" with highest total sales
+        """
+        df = self._df()
+
+        best_category = str(
+            df.groupby("Category")["Sales"].sum().idxmax()
+        )
+
+        lowest_profit_category = str(
+            df.groupby("Category")["Profit"].sum().idxmin()
+        )
+
+        best_region = str(
+            df.groupby("Region")["Sales"].sum().idxmax()
+        )
+
+        top_customer = str(
+            df.groupby("Customer Name")["Sales"].sum().idxmax()
+        )
+
+        best_product = str(
+            df.groupby("Product Name")["Sales"].sum().idxmax()
+        )
+
+        month_sales = (
+            df.assign(
+                _year=df["Order Date"].dt.year,
+                _month=df["Order Date"].dt.month,
+            )
+            .groupby(["_year", "_month"])["Sales"]
+            .sum()
+        )
+        best_year, best_month = month_sales.idxmax()
+        best_sales_month = f"{calendar.month_name[int(best_month)]} {int(best_year)}"
+
+        return {
+            "best_category": best_category,
+            "lowest_profit_category": lowest_profit_category,
+            "best_region": best_region,
+            "top_customer": top_customer,
+            "best_product": best_product,
+            "best_sales_month": best_sales_month,
+        }

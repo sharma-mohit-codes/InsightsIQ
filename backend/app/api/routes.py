@@ -83,3 +83,13 @@ def get_top_customers():
     return _service.get_top_customers()
 
 
+# ------------------------------------------------------------------
+# Insights endpoint
+# ------------------------------------------------------------------
+
+@router.get("/insights")
+def get_insights():
+    """Returns six high-level executive business insights."""
+    return _service.get_business_insights()
+
+

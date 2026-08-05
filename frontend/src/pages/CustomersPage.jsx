@@ -1,19 +1,183 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from 'recharts'
+import { apiFetch } from '../services/api'
+
+const fmtCurrency = (n) =>
+  `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+
+const CustomTooltip = ({ active, payload, label }) => {
+  if (!active || !payload || !payload.length) return null
+  const d = payload[0].payload
+  return (
+    <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm">
+      <p className="font-semibold text-slate-800 mb-1">{label}</p>
+      <p className="text-indigo-600">Sales: {fmtCurrency(d.sales)}</p>
+      <p className="text-emerald-600">Profit: {fmtCurrency(d.profit)}</p>
+      <p className="text-slate-500">Orders: {Number(d.orders).toLocaleString()}</p>
+    </div>
+  )
+}
 
 export default function CustomersPage() {
+  const [customers, setCustomers] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setLoading(true)
+    setError(null)
+
+    apiFetch('/customers/top')
+      .then((json) => {
+        if (!cancelled) {
+          setCustomers(json)
+          setLoading(false)
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setError(err.message ?? 'Failed to load customer data')
+          setLoading(false)
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   return (
     <div className="space-y-6">
+      {/* Page header */}
       <div className="border-b border-slate-200 pb-4">
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Customers</h1>
-        <p className="text-sm text-slate-500 mt-1">Customer profiles, revenue breakdown, and order frequency.</p>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Customer Analytics</h1>
+        <p className="text-sm text-slate-500 mt-1">Top 10 Customers by Sales</p>
       </div>
 
-      <div className="p-8 bg-white border border-slate-200 rounded-xl shadow-xs text-center py-16">
-        <h2 className="text-lg font-semibold text-slate-700">Customers View</h2>
-        <p className="text-sm text-slate-500 mt-2 max-w-md mx-auto">
-          Placeholder page for top customer metrics and segment distribution.
-        </p>
+      {/* Chart card */}
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6">
+        <h2 className="text-base font-semibold text-slate-700 mb-4">Top 10 Customers by Sales</h2>
+
+        {loading && (
+          <div className="flex items-center justify-center py-20 text-slate-500 text-sm">
+            Loading customer data…
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="flex items-center justify-center py-20 text-red-500 text-sm">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && customers.length === 0 && (
+          <div className="flex items-center justify-center py-20 text-slate-500 text-sm">
+            No customer data available.
+          </div>
+        )}
+
+        {!loading && !error && customers.length > 0 && (
+          <ResponsiveContainer width="100%" height={420}>
+            <BarChart
+              data={customers}
+              layout="vertical"
+              margin={{ top: 4, right: 40, left: 8, bottom: 4 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
+              <XAxis
+                type="number"
+                tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
+                tick={{ fontSize: 12, fill: '#64748b' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                type="category"
+                dataKey="customer_name"
+                width={160}
+                tick={{ fontSize: 11, fill: '#475569' }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: '#f1f5f9' }} />
+              <Bar
+                dataKey="sales"
+                fill="#6366f1"
+                radius={[0, 4, 4, 0]}
+                maxBarSize={28}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </div>
+
+      {/* Rankings table card */}
+      {!loading && !error && customers.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-200">
+            <h2 className="text-base font-semibold text-slate-700">Customer Rankings</h2>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Rank
+                  </th>
+                  <th className="px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    Customer Name
+                  </th>
+                  <th className="px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                    Sales
+                  </th>
+                  <th className="px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                    Profit
+                  </th>
+                  <th className="px-4 py-3.5 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">
+                    Orders
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-slate-100">
+                {customers.map((item, idx) => (
+                  <tr key={item.customer_name} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="px-4 py-3 text-sm font-semibold text-slate-500 whitespace-nowrap">
+                      {idx + 1}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-900">
+                      {item.customer_name}
+                    </td>
+                    <td className="px-4 py-3 text-sm font-medium text-slate-900 text-right whitespace-nowrap">
+                      {fmtCurrency(item.sales)}
+                    </td>
+                    <td
+                      className={`px-4 py-3 text-sm font-medium text-right whitespace-nowrap ${
+                        Number(item.profit) >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                      }`}
+                    >
+                      {fmtCurrency(item.profit)}
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-600 text-right whitespace-nowrap">
+                      {Number(item.orders).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

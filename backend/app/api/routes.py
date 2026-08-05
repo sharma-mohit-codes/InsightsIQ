@@ -73,3 +73,13 @@ def get_product_rankings():
     return _service.get_product_rankings()
 
 
+# ------------------------------------------------------------------
+# Customers endpoint
+# ------------------------------------------------------------------
+
+@router.get("/customers/top")
+def get_top_customers():
+    """Returns the top 10 customers ranked by total sales."""
+    return _service.get_top_customers()
+
+

@@ -330,5 +330,41 @@ class AnalyticsService:
             for _, row in grouped.iterrows()
         ]
 
+    # ------------------------------------------------------------------
+    # Top customers method
+    # ------------------------------------------------------------------
 
+    def get_top_customers(self) -> list[dict]:
+        """Groups sales data by Customer Name and returns the top 10 customers by total sales.
 
+        Returns a list of up to 10 dictionaries sorted by total sales descending,
+        each containing:
+
+        - customer_name : str   — customer name
+        - sales         : float — total sales (2 dp)
+        - profit        : float — total profit (2 dp)
+        - orders        : int   — count of unique Order IDs
+        """
+        df = self._df()
+
+        grouped = (
+            df.groupby("Customer Name", sort=False)
+            .agg(
+                total_sales=("Sales", "sum"),
+                total_profit=("Profit", "sum"),
+                total_orders=("Order ID", "nunique"),
+            )
+            .reset_index()
+            .sort_values("total_sales", ascending=False)
+            .head(10)
+        )
+
+        return [
+            {
+                "customer_name": str(row["Customer Name"]),
+                "sales": self._round(row["total_sales"]),
+                "profit": self._round(row["total_profit"]),
+                "orders": int(row["total_orders"]),
+            }
+            for _, row in grouped.iterrows()
+        ]

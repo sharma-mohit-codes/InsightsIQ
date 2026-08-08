@@ -13,12 +13,15 @@ import { apiFetch } from '../services/api'
 const fmtCurrency = (n) =>
   `$${Number(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 
+const truncateLabel = (str, maxLen = 22) =>
+  str && str.length > maxLen ? `${str.substring(0, maxLen)}...` : str
+
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null
   const d = payload[0].payload
   return (
     <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm">
-      <p className="font-semibold text-slate-800 mb-1">{label}</p>
+      <p className="font-semibold text-slate-800 mb-1">{d.product_name || label}</p>
       <p className="text-indigo-600">Sales: {fmtCurrency(d.sales)}</p>
       <p className="text-emerald-600">Profit: {fmtCurrency(d.profit)}</p>
       <p className="text-slate-500">Qty: {Number(d.quantity).toLocaleString()}</p>
@@ -103,7 +106,8 @@ export default function ProductsPage() {
               <YAxis
                 type="category"
                 dataKey="product_name"
-                width={200}
+                tickFormatter={(v) => truncateLabel(v, 22)}
+                width={180}
                 tick={{ fontSize: 11, fill: '#475569' }}
                 axisLine={false}
                 tickLine={false}

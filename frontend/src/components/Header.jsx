@@ -1,9 +1,27 @@
-import React from 'react'
-import { Menu, Bell, User } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { Menu, User, Sun, Moon } from 'lucide-react'
 
 export default function Header({ onMenuClick }) {
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light'
+  })
+
+  useEffect(() => {
+    const root = document.documentElement
+    if (theme === 'dark') {
+      root.classList.add('dark')
+    } else {
+      root.classList.remove('dark')
+    }
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))
+  }
+
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-4 md:px-8 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 bg-white border-b border-slate-200 px-4 md:px-8 flex items-center justify-between sticky top-0 z-30 transition-colors duration-200">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
@@ -19,6 +37,21 @@ export default function Header({ onMenuClick }) {
       </div>
 
       <div className="flex items-center gap-4">
+        {/* Subtle Theme Toggle */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+          aria-label="Toggle theme"
+          title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        >
+          {theme === 'dark' ? (
+            <Sun className="w-5 h-5 text-amber-400" />
+          ) : (
+            <Moon className="w-5 h-5 text-slate-600" />
+          )}
+        </button>
+
         <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-medium text-slate-600">
           <span className="w-2 h-2 rounded-full bg-blue-600"></span>
           Local Environment

@@ -1,7 +1,146 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   body {
     @apply bg-slate-50 text-slate-900 antialiased font-sans min-h-screen selection:bg-blue-100 selection:text-blue-900;
   }
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Global Dark Mode Overrides */
+.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-50\/70 {
+  background-color: #0b0f19 !important;
+}
+
+.dark .bg-white {
+  background-color: #0f172a !important;
+}
+
+/* Table borders and divide separators */
+.dark .border-slate-200,
+.dark .border-slate-300,
+.dark .border-slate-100,
+.dark .divide-slate-200,
+.dark table tr,
+.dark table th,
+.dark table td,
+.dark .divide-y > *,
+.dark .divide-slate-100 > *,
+.dark .divide-slate-100 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #1e293b !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800,
+.dark .text-slate-700 {
+  color: #f8fafc !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-50\/70:hover,
+.dark .hover\:bg-slate-100:hover {
+  background-color: #1e293b !important;
+}
+
+/* Sidebar nav active state */
+.dark .bg-blue-50 {
+  background-color: rgba(30, 58, 138, 0.35) !important;
+  color: #60a5fa !important;
+  border-color: #1e40af !important;
+}
+
+.dark .text-blue-600 {
+  color: #60a5fa !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: rgba(49, 46, 129, 0.4) !important;
+  color: #818cf8 !important;
+}
+
+/* Region & info badges */
+.dark .bg-slate-100 {
+  background-color: #1e293b !important;
+  color: #cbd5e1 !important;
+}
+
+/* Form inputs & selects */
+.dark input,
+.dark select {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+}
+
+.dark input::placeholder {
+  color: #64748b !important;
+}
+
+/* KPI Chips */
+.dark .bg-blue-100 { background-color: rgba(30, 58, 138, 0.4) !important; color: #60a5fa !important; }
+.dark .bg-emerald-100 { background-color: rgba(6, 78, 59, 0.4) !important; color: #34d399 !important; }
+.dark .bg-violet-100 { background-color: rgba(91, 33, 182, 0.4) !important; color: #a78bfa !important; }
+.dark .bg-amber-100 { background-color: rgba(120, 53, 15, 0.4) !important; color: #fbbf24 !important; }
+.dark .bg-sky-100 { background-color: rgba(12, 74, 110, 0.4) !important; color: #38bdf8 !important; }
+.dark .bg-rose-100 { background-color: rgba(136, 19, 55, 0.4) !important; color: #fb7185 !important; }
+
+/* Skeleton loaders */
+.dark .animate-pulse .bg-slate-200 { background-color: #1e293b !important; }
+.dark .animate-pulse .bg-slate-100 { background-color: #0b0f19 !important; }
+
+/* Alert boxes */
+.dark .bg-red-50,
+.dark .bg-rose-50 {
+  background-color: rgba(153, 27, 27, 0.2) !important;
+  border-color: rgba(220, 38, 38, 0.4) !important;
+}
+
+.dark .text-red-700,
+.dark .text-rose-700 { color: #fca5a5 !important; }
+.dark .text-red-500,
+.dark .text-red-400 { color: #f87171 !important; }
+
+/* Recharts Dark Mode Styling */
+.dark .recharts-cartesian-grid line {
+  stroke: #334155 !important;
+}
+
+.dark .recharts-text,
+.dark .recharts-cartesian-axis-tick-value,
+.dark .recharts-cartesian-axis-tick text {
+  fill: #94a3b8 !important;
+}
+
+.dark .recharts-default-tooltip,
+.dark .recharts-tooltip-wrapper > div {
+  background-color: #1e293b !important;
+  border-color: #334155 !important;
+  color: #f8fafc !important;
+}
+
+.dark .recharts-tooltip-cursor {
+  fill: #1e293b !important;
+  fill-opacity: 0.5 !important;
+  stroke: none !important;
+}
+
+.dark .recharts-legend-item-text {
+  color: #cbd5e1 !important;
 }

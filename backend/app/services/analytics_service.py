@@ -426,3 +426,12 @@ class AnalyticsService:
             "best_product": best_product,
             "best_sales_month": best_sales_month,
         }
+
+    # ------------------------------------------------------------------
+    # CSV Export method
+    # ------------------------------------------------------------------
+
+    def export_sales_csv(self) -> str:
+        """Exports the cleaned sales DataFrame as a CSV string."""
+        return self._df().to_csv(index=False)
+

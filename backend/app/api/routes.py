@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Response
 
 from app.services.analytics_service import AnalyticsService
 
@@ -91,5 +91,21 @@ def get_top_customers():
 def get_insights():
     """Returns six high-level executive business insights."""
     return _service.get_business_insights()
+
+
+# ------------------------------------------------------------------
+# Reports endpoint
+# ------------------------------------------------------------------
+
+@router.get("/reports/export")
+def export_reports():
+    """Returns the sales report as a downloadable CSV file."""
+    csv_data = _service.export_sales_csv()
+    return Response(
+        content=csv_data,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=insightiq_sales_report.csv"},
+    )
+
 
 

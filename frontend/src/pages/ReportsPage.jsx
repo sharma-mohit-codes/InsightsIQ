@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Download, FileSpreadsheet, Loader2, AlertCircle } from 'lucide-react'
-import { BASE_URL } from '../services/api'
+import { API_BASE_URL } from '../services/api'
 export default function ReportsPage() {
   // ── Unfiltered Complete Dataset State ─────────────────────────────────────
   const [downloading, setDownloading] = useState(false)
@@ -39,7 +39,7 @@ export default function ReportsPage() {
     setError(null)
 
     try {
-      const response = await fetch(`${BASE_URL}/reports/export`)
+      const response = await fetch(`${API_BASE_URL}/reports/export`)
 
       if (!response.ok) {
         throw new Error(`Download failed with status ${response.status}: ${response.statusText}`)
@@ -81,7 +81,7 @@ export default function ReportsPage() {
 
     try {
       const query = buildExportQuery()
-      const response = await fetch(`${BASE_URL}/reports/export${query}`)
+      const response = await fetch(`${API_BASE_URL}/reports/export${query}`)
 
       if (!response.ok) {
         throw new Error(`Report preparation failed with status ${response.status}: ${response.statusText}`)
@@ -105,7 +105,7 @@ export default function ReportsPage() {
 
     try {
       const query = buildExportQuery()
-      const response = await fetch(`${BASE_URL}/reports/export${query}`)
+      const response = await fetch(`${API_BASE_URL}/reports/export${query}`)
 
       if (!response.ok) {
         throw new Error(`Download failed with status ${response.status}: ${response.statusText}`)

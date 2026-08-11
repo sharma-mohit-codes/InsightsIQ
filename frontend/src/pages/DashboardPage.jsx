@@ -103,9 +103,9 @@ function KPISkeleton() {
 
 function ChartSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 h-96 animate-pulse flex flex-col justify-between">
+    <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 h-84 animate-pulse flex flex-col justify-between">
       <div className="h-4 w-40 bg-slate-200 rounded mb-4" />
-      <div className="h-64 bg-slate-100 rounded w-full" />
+      <div className="h-60 bg-slate-100 rounded w-full" />
     </div>
   )
 }
@@ -202,26 +202,41 @@ export default function DashboardPage() {
 
         {trendsData && !trendsLoading && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <div className="h-80 w-full">
+            <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={formattedTrends} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="period" tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis
+                    dataKey="period"
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    axisLine={{ stroke: '#cbd5e1' }}
+                    tickLine={false}
+                    dy={5}
+                  />
                   <YAxis
                     tick={{ fill: '#64748b', fontSize: 12 }}
                     tickFormatter={(val) => `$${val.toLocaleString()}`}
+                    axisLine={false}
+                    tickLine={false}
+                    width={65}
                   />
                   <Tooltip
-                    formatter={(value) => [`$${Number(value).toLocaleString()}`, undefined]}
-                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                    formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name]}
+                    contentStyle={{
+                      borderRadius: '0.5rem',
+                      borderColor: '#e2e8f0',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                      padding: '8px 12px',
+                    }}
+                    labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
                   />
-                  <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                  <Legend wrapperStyle={{ paddingTop: '12px' }} />
                   <Line
                     type="monotone"
                     dataKey="sales"
                     name="Sales"
                     stroke="#2563eb"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                     dot={false}
                     activeDot={{ r: 6 }}
                   />
@@ -230,7 +245,7 @@ export default function DashboardPage() {
                     dataKey="profit"
                     name="Profit"
                     stroke="#10b981"
-                    strokeWidth={2}
+                    strokeWidth={2.5}
                     dot={false}
                     activeDot={{ r: 6 }}
                   />
@@ -253,20 +268,35 @@ export default function DashboardPage() {
 
         {categoriesData && !categoriesLoading && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <div className="h-80 w-full">
+            <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={categoriesData} margin={{ top: 10, right: 30, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-                  <XAxis dataKey="category" tick={{ fill: '#64748b', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" vertical={false} />
+                  <XAxis
+                    dataKey="category"
+                    tick={{ fill: '#64748b', fontSize: 12 }}
+                    axisLine={{ stroke: '#cbd5e1' }}
+                    tickLine={false}
+                    dy={5}
+                  />
                   <YAxis
                     tick={{ fill: '#64748b', fontSize: 12 }}
                     tickFormatter={(val) => `$${val.toLocaleString()}`}
+                    axisLine={false}
+                    tickLine={false}
+                    width={65}
                   />
                   <Tooltip
                     formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Sales']}
-                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                    contentStyle={{
+                      borderRadius: '0.5rem',
+                      borderColor: '#e2e8f0',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                      padding: '8px 12px',
+                    }}
+                    labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
                   />
-                  <Bar dataKey="sales" name="Sales" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="sales" name="Sales" fill="#3b82f6" radius={[4, 4, 0, 0]} maxBarSize={48} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -286,26 +316,32 @@ export default function DashboardPage() {
 
         {regionsData && !regionsLoading && (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <div className="h-80 w-full">
+            <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip
-                    formatter={(value) => [`$${Number(value).toLocaleString()}`, 'Sales']}
-                    contentStyle={{ backgroundColor: '#ffffff', borderRadius: '0.5rem', borderColor: '#e2e8f0' }}
+                    formatter={(value, name) => [`$${Number(value).toLocaleString()}`, name]}
+                    contentStyle={{
+                      borderRadius: '0.5rem',
+                      borderColor: '#e2e8f0',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                      padding: '8px 12px',
+                    }}
+                    labelStyle={{ fontWeight: 600, marginBottom: '4px' }}
                   />
-                  <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                  <Legend wrapperStyle={{ paddingTop: '12px' }} />
                   <Pie
                     data={regionsData}
                     dataKey="sales"
                     nameKey="region"
                     cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={105}
-                    paddingAngle={4}
+                    cy="45%"
+                    innerRadius={60}
+                    outerRadius={95}
+                    paddingAngle={3}
                   >
                     {regionsData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={REGION_COLORS[index % REGION_COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={REGION_COLORS[index % REGION_COLORS.length]} stroke="none" />
                     ))}
                   </Pie>
                 </PieChart>

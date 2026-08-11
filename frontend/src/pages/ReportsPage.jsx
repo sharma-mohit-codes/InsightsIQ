@@ -89,6 +89,9 @@ export default function ReportsPage() {
         throw new Error(`Report preparation failed with status ${response.status}: ${response.statusText}`)
       }
 
+      // Discard the body so the browser can release the connection immediately.
+      await response.body?.cancel()
+
       setReportReady(true)
     } catch (err) {
       console.error('Failed to create report:', err)

@@ -15,7 +15,7 @@ export const API_BASE_URL =
  * @returns {Promise<any>} Parsed JSON body
  */
 export async function apiFetch(path) {
-  const response = await fetch(`${BASE_URL}${path}`)
+  const response = await fetch(`${API_BASE_URL}${path}`)
 
   if (!response.ok) {
     throw new Error(`API error ${response.status}: ${response.statusText}`)

@@ -204,29 +204,18 @@ class AnalyticsService:
     # Sales transaction method
     # ------------------------------------------------------------------
 
-    def get_sales_data(
+    def _filter_df(
         self,
-        page: int = 1,
-        page_size: int = 20,
         region: str = "All",
         category: str = "All",
+        date_from: str | None = None,
+        date_to: str | None = None,
         search: str = "",
-    ) -> dict:
-        """Returns paginated sales transaction records with optional region, category, and search filtering.
+    ):
+        """Internal helper to apply region, category, date range, and search filters to the DataFrame."""
+        import pandas as pd
 
-        Args:
-            page: 1-indexed page number (default 1)
-            page_size: number of records per page (default 20)
-            region: region filter, or "All" for no filter
-            category: category filter, or "All" for no filter
-            search: search string to filter across Order ID, Customer Name, Category, and Region
-
-        Returns:
-            dict containing total_records, filtered_records, total_pages, current_page, page_size, and data.
-        """
         df = self._df()
-        total_records = len(df)
-
         filtered_df = df
 
         if region and region.strip() and region.strip().lower() != "all":
@@ -239,6 +228,22 @@ class AnalyticsService:
                 filtered_df["Category"].str.lower() == category.strip().lower()
             ]
 
+        if date_from and str(date_from).strip():
+            try:
+                parsed_from = pd.to_datetime(str(date_from).strip())
+                filtered_df = filtered_df[filtered_df["Order Date"] >= parsed_from]
+            except (ValueError, TypeError):
+                pass
+
+        if date_to and str(date_to).strip():
+            try:
+                parsed_to = pd.to_datetime(str(date_to).strip())
+                if parsed_to.time() == pd.Timestamp("00:00:00").time():
+                    parsed_to = parsed_to.replace(hour=23, minute=59, second=59, microsecond=999999)
+                filtered_df = filtered_df[filtered_df["Order Date"] <= parsed_to]
+            except (ValueError, TypeError):
+                pass
+
         if search and search.strip():
             search_term = search.strip().lower()
             filtered_df = filtered_df[
@@ -247,6 +252,43 @@ class AnalyticsService:
                 | filtered_df["Category"].astype(str).str.lower().str.contains(search_term, regex=False)
                 | filtered_df["Region"].astype(str).str.lower().str.contains(search_term, regex=False)
             ]
+
+        return filtered_df
+
+    def get_sales_data(
+        self,
+        page: int = 1,
+        page_size: int = 20,
+        region: str = "All",
+        category: str = "All",
+        search: str = "",
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> dict:
+        """Returns paginated sales transaction records with optional region, category, date-range, and search filtering.
+
+        Args:
+            page: 1-indexed page number (default 1)
+            page_size: number of records per page (default 20)
+            region: region filter, or "All" for no filter
+            category: category filter, or "All" for no filter
+            search: search string to filter across Order ID, Customer Name, Category, and Region
+            date_from: optional start date ISO string (inclusive)
+            date_to: optional end date ISO string (inclusive)
+
+        Returns:
+            dict containing total_records, filtered_records, total_pages, current_page, page_size, and data.
+        """
+        df = self._df()
+        total_records = len(df)
+
+        filtered_df = self._filter_df(
+            region=region,
+            category=category,
+            date_from=date_from,
+            date_to=date_to,
+            search=search,
+        )
 
         filtered_records = len(filtered_df)
 
@@ -427,11 +469,20 @@ class AnalyticsService:
             "best_sales_month": best_sales_month,
         }
 
-    # ------------------------------------------------------------------
-    # CSV Export method
-    # ------------------------------------------------------------------
-
-    def export_sales_csv(self) -> str:
-        """Exports the cleaned sales DataFrame as a CSV string."""
-        return self._df().to_csv(index=False)
+    def export_sales_csv(
+        self,
+        region: str = "All",
+        category: str = "All",
+        date_from: str | None = None,
+        date_to: str | None = None,
+    ) -> str:
+        """Exports sales records as a CSV string, applying optional region, category, and date-range filters."""
+        filtered_df = self._filter_df(
+            region=region,
+            category=category,
+            date_from=date_from,
+            date_to=date_to,
+            search="",
+        )
+        return filtered_df.to_csv(index=False)
 

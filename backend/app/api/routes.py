@@ -56,10 +56,18 @@ def get_sales(
     region: str = "All",
     category: str = "All",
     search: str = "",
+    date_from: str | None = None,
+    date_to: str | None = None,
 ):
-    """Returns paginated sales transaction records with optional region, category, and search filtering."""
+    """Returns paginated sales transaction records with optional region, category, date-range, and search filtering."""
     return _service.get_sales_data(
-        page=page, page_size=page_size, region=region, category=category, search=search
+        page=page,
+        page_size=page_size,
+        region=region,
+        category=category,
+        search=search,
+        date_from=date_from,
+        date_to=date_to,
     )
 
 
@@ -98,9 +106,19 @@ def get_insights():
 # ------------------------------------------------------------------
 
 @router.get("/reports/export")
-def export_reports():
-    """Returns the sales report as a downloadable CSV file."""
-    csv_data = _service.export_sales_csv()
+def export_reports(
+    region: str = "All",
+    category: str = "All",
+    date_from: str | None = None,
+    date_to: str | None = None,
+):
+    """Returns the sales report as a downloadable CSV file with optional region, category, and date-range filters."""
+    csv_data = _service.export_sales_csv(
+        region=region,
+        category=category,
+        date_from=date_from,
+        date_to=date_to,
+    )
     return Response(
         content=csv_data,
         media_type="text/csv",

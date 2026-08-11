@@ -8,6 +8,8 @@ export default function SalesPage() {
   const [page, setPage] = useState(1)
   const [region, setRegion] = useState('All')
   const [category, setCategory] = useState('All')
+  const [dateFrom, setDateFrom] = useState('')
+  const [dateTo, setDateTo] = useState('')
   const [search, setSearch] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [salesResponse, setSalesResponse] = useState(null)
@@ -33,9 +35,11 @@ export default function SalesPage() {
     setLoading(true)
     setError(null)
 
-    apiFetch(
-      `/sales?page=${page}&page_size=20&region=${encodeURIComponent(region)}&category=${encodeURIComponent(category)}&search=${encodeURIComponent(debouncedSearch)}`
-    )
+    let url = `/sales?page=${page}&page_size=20&region=${encodeURIComponent(region)}&category=${encodeURIComponent(category)}&search=${encodeURIComponent(debouncedSearch)}`
+    if (dateFrom) url += `&date_from=${encodeURIComponent(dateFrom)}`
+    if (dateTo) url += `&date_to=${encodeURIComponent(dateTo)}`
+
+    apiFetch(url)
       .then((json) => {
         if (!cancelled) {
           setSalesResponse(json)
@@ -52,7 +56,7 @@ export default function SalesPage() {
     return () => {
       cancelled = true
     }
-  }, [page, region, category, debouncedSearch])
+  }, [page, region, category, debouncedSearch, dateFrom, dateTo])
 
   const totalPages = salesResponse?.total_pages ?? 1
   const totalRecords = salesResponse?.total_records ?? 0
@@ -134,6 +138,38 @@ export default function SalesPage() {
               <option value="Office Supplies">Office Supplies</option>
               <option value="Technology">Technology</option>
             </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="date-from-filter" className="text-sm font-medium text-slate-700">
+              From:
+            </label>
+            <input
+              id="date-from-filter"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => {
+                setDateFrom(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800"
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="date-to-filter" className="text-sm font-medium text-slate-700">
+              To:
+            </label>
+            <input
+              id="date-to-filter"
+              type="date"
+              value={dateTo}
+              onChange={(e) => {
+                setDateTo(e.target.value)
+                setPage(1)
+              }}
+              className="px-3 py-1.5 text-sm bg-white border border-slate-300 rounded-lg shadow-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800"
+            />
           </div>
         </div>
 

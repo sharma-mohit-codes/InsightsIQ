@@ -20,8 +20,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload || !payload.length) return null
   const d = payload[0].payload
   return (
-    <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm">
-      <p className="font-semibold text-slate-800 mb-1">{d.customer_name || label}</p>
+    <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 text-sm max-w-[260px] sm:max-w-xs break-words">
+      <p className="font-semibold text-slate-800 mb-1 leading-snug">{d.customer_name || label}</p>
       <p className="text-indigo-600">Sales: {fmtCurrency(d.sales)}</p>
       <p className="text-emerald-600">Profit: {fmtCurrency(d.profit)}</p>
       <p className="text-slate-500">Orders: {Number(d.orders).toLocaleString()}</p>
@@ -33,6 +33,14 @@ export default function CustomersPage() {
   const [customers, setCustomers] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -67,7 +75,7 @@ export default function CustomersPage() {
       </div>
 
       {/* Chart card */}
-      <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-6">
+      <div className="bg-white border border-slate-200 rounded-xl shadow-xs p-4 sm:p-6 min-w-0">
         <h2 className="text-base font-semibold text-slate-700 mb-4">Top 10 Customers by Sales</h2>
 
         {loading && (
@@ -89,26 +97,30 @@ export default function CustomersPage() {
         )}
 
         {!loading && !error && customers.length > 0 && (
-          <ResponsiveContainer width="100%" height={420}>
+          <ResponsiveContainer width="100%" height={isMobile ? 380 : 420}>
             <BarChart
               data={customers}
               layout="vertical"
-              margin={{ top: 4, right: 40, left: 8, bottom: 4 }}
+              margin={
+                isMobile
+                  ? { top: 4, right: 12, left: 0, bottom: 4 }
+                  : { top: 4, right: 40, left: 8, bottom: 4 }
+              }
             >
               <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e2e8f0" />
               <XAxis
                 type="number"
                 tickFormatter={(v) => `$${(v / 1000).toFixed(0)}k`}
-                tick={{ fontSize: 12, fill: '#64748b' }}
+                tick={{ fontSize: isMobile ? 10 : 12, fill: '#64748b' }}
                 axisLine={false}
                 tickLine={false}
               />
               <YAxis
                 type="category"
                 dataKey="customer_name"
-                tickFormatter={(v) => truncateLabel(v, 22)}
-                width={160}
-                tick={{ fontSize: 11, fill: '#475569' }}
+                tickFormatter={(v) => truncateLabel(v, isMobile ? 12 : 22)}
+                width={isMobile ? 100 : 160}
+                tick={{ fontSize: isMobile ? 10 : 11, fill: '#475569' }}
                 axisLine={false}
                 tickLine={false}
               />

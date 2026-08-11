@@ -39,7 +39,6 @@ export default function ReportsPage() {
     setError(null)
 
     try {
-      fetch(`${BASE_URL}/reports/export`)
       const response = await fetch(`${BASE_URL}/reports/export`)
 
       if (!response.ok) {
@@ -81,7 +80,6 @@ export default function ReportsPage() {
     setReportReady(false)
 
     try {
-      fetch(`${BASE_URL}/reports/export`)
       const query = buildExportQuery()
       const response = await fetch(`${BASE_URL}/reports/export${query}`)
 
@@ -106,7 +104,6 @@ export default function ReportsPage() {
     setFilteredError(null)
 
     try {
-      fetch(`${BASE_URL}/reports/export`)
       const query = buildExportQuery()
       const response = await fetch(`${BASE_URL}/reports/export${query}`)
 

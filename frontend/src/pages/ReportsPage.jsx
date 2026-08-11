@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Download, FileSpreadsheet, Loader2, AlertCircle } from 'lucide-react'
-import { API_BASE_URL } from '../services/api'
+import { BASE_URL } from '../services/api'
 export default function ReportsPage() {
   // ── Unfiltered Complete Dataset State ─────────────────────────────────────
   const [downloading, setDownloading] = useState(false)
@@ -39,7 +39,7 @@ export default function ReportsPage() {
     setError(null)
 
     try {
-      fetch(`${API_BASE_URL}/reports/export`)
+      fetch(`${BASE_URL}/reports/export`)
       const response = await fetch(`${BASE_URL}/reports/export`)
 
       if (!response.ok) {
@@ -81,7 +81,7 @@ export default function ReportsPage() {
     setReportReady(false)
 
     try {
-      fetch(`${API_BASE_URL}/reports/export`)
+      fetch(`${BASE_URL}/reports/export`)
       const query = buildExportQuery()
       const response = await fetch(`${BASE_URL}/reports/export${query}`)
 
@@ -106,7 +106,7 @@ export default function ReportsPage() {
     setFilteredError(null)
 
     try {
-      fetch(`${API_BASE_URL}/reports/export`)
+      fetch(`${BASE_URL}/reports/export`)
       const query = buildExportQuery()
       const response = await fetch(`${BASE_URL}/reports/export${query}`)
 

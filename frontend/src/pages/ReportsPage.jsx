@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Download, FileSpreadsheet, Loader2, AlertCircle } from 'lucide-react'
-import { apiFetch, API_BASE_URL } from '../api'
+import { API_BASE_URL } from '../services/api'
 export default function ReportsPage() {
   // ── Unfiltered Complete Dataset State ─────────────────────────────────────
   const [downloading, setDownloading] = useState(false)

@@ -4,13 +4,16 @@
 
 ### Business Intelligence & Sales Analytics Dashboard
 
-Modern full-stack analytics dashboard built using **React, FastAPI, Pandas & SQLite**.
+A full-stack analytics dashboard for exploring retail sales data, tracking business performance, and generating filtered reports.
 
 ![React](https://img.shields.io/badge/React-19-61DAFB)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688)
 ![Python](https://img.shields.io/badge/Python-3776AB)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-38BDF8)
-![Status](https://img.shields.io/badge/Status-Active-orange)
+![Pandas](https://img.shields.io/badge/Pandas-150458)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38BDF8)
+![Status](https://img.shields.io/badge/Status-Live-success)
+
+**[🌐 Live Demo](https://insightsiq.vercel.app)**
 
 </div>
 
@@ -18,36 +21,33 @@ Modern full-stack analytics dashboard built using **React, FastAPI, Pandas & SQL
 
 ## 📸 Preview
 
-| Dashboard | Analytics |
-|------------|-----------|
-| ![](screenshots/dashboard.png) | ![](screenshots/analytics.png) |
+| Dashboard                      | Sales                      |
+| ------------------------------ | -------------------------- |
+| ![](screenshots/dashboard.png) | ![](screenshots/sales.png) |
 
-| Sales | Paginated Sales |
-|-------|-----------------|
-| ![](screenshots/plain-sales.png) | ![](screenshots/paginated-sales.png) |
+| Products                      | Insights                       |
+| ----------------------------- | ------------------------------ |
+| ![](screenshots/products.png) | ![](screenshots/analytics.png) |
 
 ---
 
 ## ✨ Features
 
-### 📊 Dashboard
-- KPI Cards
-- Monthly Sales & Profit Trend
-- Category Breakdown
-- Regional Distribution
+* 📊 **Executive Dashboard** — KPIs, sales/profit trends, category and regional analysis
+* 🛒 **Sales Analytics** — Search, pagination, region/category filters and date-range filtering
+* 📦 **Product & Customer Analytics** — Top rankings with interactive charts and tables
+* 💡 **Business Insights** — Automatically identifies key performance highlights
+* 📄 **CSV Reports** — Export complete or filtered sales datasets
+* 🎨 **Responsive UI** — Mobile-friendly layout with dark/light mode
 
-### 🛒 Sales Module
-- Paginated Transactions
-- Server-side Pagination
-- Server-side Region & Category Filters
+---
 
-### 🚧 Coming Soon
-- Search
-- Sorting
-- Product Analytics
-- Customer Analytics
-- Business Insights
-- CSV Report Export
+## 🛠 Tech Stack
+
+**Frontend:** React, Vite, Tailwind CSS, Recharts
+**Backend:** FastAPI, Python, Pandas
+**Data:** Sample Superstore Sales Dataset
+**Deployment:** Vercel + Render
 
 ---
 
@@ -56,78 +56,49 @@ Modern full-stack analytics dashboard built using **React, FastAPI, Pandas & SQL
 ```text
 React + Vite
       │
-Native Fetch API
+   Fetch API
       │
-FastAPI
+   FastAPI
       │
 Analytics Service
       │
 Dataset Loader
       │
-CSV Dataset
+Superstore CSV
 ```
 
----
-
-## 🛠 Tech Stack
-
-| Frontend | Backend | Data | Charts |
-|----------|----------|------|---------|
-| React + Vite | FastAPI | Pandas + SQLite | Recharts |
+The dataset is loaded once and processed using Pandas, while the frontend communicates with the backend through a centralized API client.
 
 ---
 
-## 📁 Project Structure
+## 📁 Structure
 
 ```text
-InsightIQ
-│
-├── frontend
-│   ├── components
-│   ├── hooks
-│   ├── layouts
-│   ├── pages
-│   ├── services
-│   └── utils
-│
-├── backend
-│   ├── api
-│   ├── core
-│   ├── data
-│   ├── services
-│   ├── models
-│   └── schemas
-│
-├── dataset
-├── screenshots
-└── README.md
+InsightIQ/
+├── frontend/
+│   └── src/
+│       ├── components/
+│       ├── hooks/
+│       ├── pages/
+│       └── services/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── data/
+│   │   └── services/
+│   └── main.py
+├── dataset/
+└── screenshots/
 ```
-
----
-
-## 📊 Dataset
-
-**Sample Superstore Sales Dataset**
-
-- ~9,994 Transactions
-- 21 Attributes
-- 4 Years of Retail Sales Data
-
----
-
-## 🔌 API Endpoints
-
-| Endpoint | Description |
-|----------|-------------|
-| `/analytics/kpis` | KPI Summary |
-| `/analytics/trends` | Monthly Trends |
-| `/analytics/categories` | Category Analytics |
-| `/analytics/regions` | Region Analytics |
-| `/sales` | Paginated Sales Records |
 
 ---
 
 ## 🚀 Run Locally
+
+```bash
+git clone https://github.com/sharma-mohit-codes/InsightsIQ.git
+cd InsightsIQ
+```
 
 ### Backend
 
@@ -145,48 +116,25 @@ npm install
 npm run dev
 ```
 
+Frontend → `http://localhost:5173`
 Backend → `http://localhost:8000`
-
 Swagger → `http://localhost:8000/docs`
 
-Frontend → `http://localhost:5173`
-
 ---
 
-## 📈 Progress
+## 🌐 Deployment
 
-| Module | Status |
-|---------|--------|
-| Dashboard | ✅ Complete |
-| Sales | 🚧 In Progress |
-| Products | ⏳ Planned |
-| Customers | ⏳ Planned |
-| Insights | ⏳ Planned |
-| Reports | ⏳ Planned |
+**Frontend:** Vercel
+**Backend:** Render
 
----
-
-## 🗺 Roadmap
-
-- [x] KPI Dashboard
-- [x] Interactive Charts
-- [x] Sales Pagination
-- [x] Server-side Filtering
-- [ ] Search
-- [ ] Sorting
-- [ ] Product Analytics
-- [ ] Customer Analytics
-- [ ] Reports Export
-- [ ] Deployment
+The frontend uses `VITE_API_BASE_URL` so the same codebase works for both local development and production.
 
 ---
 
 ## 👨‍💻 Author
 
-**Mohit Kumar**
+**Mohit Kumar** · B.Tech Information Technology
 
-B.Tech Information Technology
+[GitHub](https://github.com/sharma-mohit-codes)
 
----
-
-⭐ If you found this project useful, consider giving it a star!
+⭐ If you like the project, consider giving it a star!

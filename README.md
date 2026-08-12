@@ -21,6 +21,7 @@ A full-stack analytics dashboard for exploring retail sales data, tracking busin
 
 ## 📸 Preview
 
+
 | Dashboard                      | Sales                      |
 | ------------------------------ | -------------------------- |
 | ![](screenshots/dashboard.png) | ![](screenshots/sales.png) |
@@ -137,4 +138,4 @@ The frontend uses `VITE_API_BASE_URL` so the same codebase works for both local 
 
 [GitHub](https://github.com/sharma-mohit-codes)
 
-⭐ If you like the project, consider giving it a star!
+⭐ If you admire the project, consider giving it a star!
